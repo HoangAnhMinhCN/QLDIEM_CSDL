@@ -1,0 +1,7 @@
+Để xem database:
+B1: Download file sql trong folder
+B2: Download mysql, mysql workbench va cài đặt
+B3: Tạo một database
+B4: Sau khi tạo xong, ở phía góc trên bên trái, nhấn vào phần Server rồi Data export
+B5: Chọn Import from self-contained file rồi chọn file sql đã lưu ở B1.
+B6: Chọn Start Import
