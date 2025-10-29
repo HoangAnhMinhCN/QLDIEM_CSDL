@@ -26,13 +26,13 @@ CREATE TABLE `attendance` (
   `id` int NOT NULL AUTO_INCREMENT,
   `student_id` varchar(255) NOT NULL,
   `course_id` varchar(255) NOT NULL,
-  `join_date` date NOT NULL,
+  `join_date` date DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `student_id` (`student_id`),
   KEY `course_id` (`course_id`),
   CONSTRAINT `attendance_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `student` (`student_id`) ON DELETE CASCADE,
   CONSTRAINT `attendance_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +41,7 @@ CREATE TABLE `attendance` (
 
 LOCK TABLES `attendance` WRITE;
 /*!40000 ALTER TABLE `attendance` DISABLE KEYS */;
-INSERT INTO `attendance` VALUES (1,'s2','c1','2025-10-18'),(2,'s2','c2','2025-10-18');
+INSERT INTO `attendance` VALUES (4,'studentf38677fa6b','course199cac2670','2025-08-13'),(5,'studentd55341ebad','course199cac2670','2025-08-13');
 /*!40000 ALTER TABLE `attendance` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -69,7 +69,7 @@ CREATE TABLE `course` (
 
 LOCK TABLES `course` WRITE;
 /*!40000 ALTER TABLE `course` DISABLE KEYS */;
-INSERT INTO `course` VALUES ('c1','Physics','t1','2025-08-15'),('c2','OOP','t2','2025-08-15');
+INSERT INTO `course` VALUES ('c3','Calculus','t3','2025-08-16'),('course124de93bb6','Hệ Điều Hành - Nhóm 1','teacher9d42ad7fd5',NULL),('course199cac2670','Mạng máy tính','teacherd96127310e','2025-08-20'),('course257adf1050','Cơ sở dữ liệu','teacher9d42ad7fd5','2025-08-10'),('course28c9f8459b','Hệ Điều Hành','teacher9d42ad7fd5',NULL),('course7099d558ca','Cơ sở dữ liệu - Nhóm 2','teacher9d42ad7fd5','2025-08-11');
 /*!40000 ALTER TABLE `course` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -85,8 +85,9 @@ CREATE TABLE `exam` (
   `exam_name` varchar(255) NOT NULL,
   `teacher_id` varchar(255) NOT NULL,
   `course_id` varchar(255) NOT NULL,
-  `exam_date` date DEFAULT NULL,
-  `created_date` date NOT NULL,
+  `exam_date` varchar(255) DEFAULT NULL,
+  `created_date` varchar(255) DEFAULT NULL,
+  `sourse_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`exam_id`),
   KEY `teacher_id` (`teacher_id`),
   KEY `course_id` (`course_id`),
@@ -101,6 +102,7 @@ CREATE TABLE `exam` (
 
 LOCK TABLES `exam` WRITE;
 /*!40000 ALTER TABLE `exam` DISABLE KEYS */;
+INSERT INTO `exam` VALUES ('exam0f23c50d3d','Kiểm tra 15 phút','teacherd96127310e','course199cac2670','2025-12-06',NULL,NULL),('examd5a6e7b0a6','Kiểm tra 15 phút lần 2','teacherd96127310e','course199cac2670','2025-12-06','2025-09-20',NULL);
 /*!40000 ALTER TABLE `exam` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -127,7 +129,7 @@ CREATE TABLE `score` (
   CONSTRAINT `score_ibfk_2` FOREIGN KEY (`teacher_id`) REFERENCES `teacher` (`teacher_id`) ON DELETE CASCADE,
   CONSTRAINT `score_ibfk_3` FOREIGN KEY (`student_id`) REFERENCES `student` (`student_id`) ON DELETE CASCADE,
   CONSTRAINT `score_ibfk_4` FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -136,6 +138,7 @@ CREATE TABLE `score` (
 
 LOCK TABLES `score` WRITE;
 /*!40000 ALTER TABLE `score` DISABLE KEYS */;
+INSERT INTO `score` VALUES (1,'exam0f23c50d3d','teacherd96127310e','course199cac2670','studentf38677fa6b',0),(2,'exam0f23c50d3d','teacherd96127310e','course199cac2670','studentd55341ebad',10),(4,'examd5a6e7b0a6','teacherd96127310e','course199cac2670','studentf38677fa6b',0),(5,'examd5a6e7b0a6','teacherd96127310e','course199cac2670','studentd55341ebad',0);
 /*!40000 ALTER TABLE `score` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -151,8 +154,8 @@ CREATE TABLE `student` (
   `student_name` varchar(255) NOT NULL,
   `user_name` varchar(255) NOT NULL,
   `user_password` varchar(255) NOT NULL,
-  `birthday` date DEFAULT NULL,
-  `gender` varchar(16) DEFAULT NULL,
+  `birthday` varchar(255) DEFAULT NULL,
+  `gender` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`student_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -163,7 +166,7 @@ CREATE TABLE `student` (
 
 LOCK TABLES `student` WRITE;
 /*!40000 ALTER TABLE `student` DISABLE KEYS */;
-INSERT INTO `student` VALUES ('s1','Nguyen Van A','nguyenvana','aaa','2005-01-01','nam'),('s2','hoang van b','random','123456','2000-01-04','nam');
+INSERT INTO `student` VALUES ('exam7ddc49e8bf','Hoàng Văn Bắc','bacvanhoang','eeeeee','2005-12-12','nam'),('s2','hoang van b','random','123456','2000-01-04','nam'),('studentd55341ebad','Nguyễn Thị Ngọc Diệp','diepa','asdfgh','2005-03-12','nu'),('studentf14ac13566','Trần Thu Hương','huong','huong1990','2004-10-08','nu'),('studentf38677fa6b','Nguyễn Thị Hằng','hhhhhaaa','zzzzz','2004-03-01','nu');
 /*!40000 ALTER TABLE `student` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -179,8 +182,8 @@ CREATE TABLE `teacher` (
   `teacher_name` varchar(255) NOT NULL,
   `user_name` varchar(255) NOT NULL,
   `user_password` varchar(255) NOT NULL,
-  `birthday` date DEFAULT NULL,
-  `gender` varchar(16) DEFAULT NULL,
+  `birthday` varchar(255) DEFAULT NULL,
+  `gender` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`teacher_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -191,7 +194,7 @@ CREATE TABLE `teacher` (
 
 LOCK TABLES `teacher` WRITE;
 /*!40000 ALTER TABLE `teacher` DISABLE KEYS */;
-INSERT INTO `teacher` VALUES ('t1','hoang hoa tham','hoa-tham','123456789','1998-10-10','nam'),('t2','Nguyen Van Quy','quynv','123','1980-06-07','nu');
+INSERT INTO `teacher` VALUES ('t2','Nguyen Van Quy','quynv','123','1980-06-07','nu'),('t3','Hoàng Văn Ngọc','Ngọc','123456789','1990-03-03','nam'),('teacher9d42ad7fd5','Trần Thu Hương','huong','huong1990','1990-09-08','nu'),('teacherd96127310e','Trần Thu Hoài','HoaiThu','hoaithu99999','1989-08-08','nu');
 /*!40000 ALTER TABLE `teacher` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -204,4 +207,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-19 14:09:44
+-- Dump completed on 2025-10-29 10:46:00
