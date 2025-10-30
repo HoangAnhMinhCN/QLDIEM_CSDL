@@ -5,8 +5,10 @@ import com.qldiem.demo.DTO.CourseResponse;
 import com.qldiem.demo.Relations.CourseJoined;
 import com.qldiem.demo.Entity.Student;
 import com.qldiem.demo.Repository.CourseStoredProcRepository;
+import com.qldiem.demo.Service.AttendanceService;
 import com.qldiem.demo.Service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -23,6 +25,8 @@ public class StudentController {
 
     @Autowired
     private CourseService  courseService;
+    @Autowired
+    private AttendanceService attendanceService;
 
     // Xem các khóa học đã tham gia
     @GetMapping("/me/courses")
@@ -77,6 +81,36 @@ public class StudentController {
         }
         catch (Exception e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    //=============================
+    //Đăng kí khóa
+    @PostMapping("/courses/{courseId}/join")
+    @PreAuthorize("hasRole('STUDENT')")
+    public ResponseEntity<?> joinCourse(@PathVariable String courseId,
+                                        Authentication authentication) {
+        try {
+            Student student = (Student) authentication.getPrincipal();
+            attendanceService.joinCourse(student.getStudentId(), courseId);
+            return ResponseEntity.ok("Đăng ký thành công!");
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    //Hủy khóa
+    @DeleteMapping("/courses/{courseId}/delete")
+    @PreAuthorize("hasRole('STUDENT')")
+    public ResponseEntity<?> deleteCourse(@PathVariable String courseId,
+                                          Authentication authentication) {
+        try {
+            Student student = (Student) authentication.getPrincipal();
+            attendanceService.leaveCourse(student.getStudentId(), courseId);
+            return ResponseEntity.ok("Hủy khóa thành công!");
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 }

@@ -2,8 +2,10 @@ package com.qldiem.demo.Controller;
 
 import com.qldiem.demo.DTO.CourseResponse;
 import com.qldiem.demo.DTO.CreateCourseRequest;
+import com.qldiem.demo.DTO.StudentInCourseResponse;
 import com.qldiem.demo.DTO.UpdateCourseRequest;
 import com.qldiem.demo.Entity.Teacher;
+import com.qldiem.demo.Service.AttendanceService;
 import com.qldiem.demo.Service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -20,6 +21,8 @@ public class TeacherController {
 
     @Autowired
     private CourseService courseService;
+    @Autowired
+    private AttendanceService attendanceService;
 
     // profile
     @GetMapping("/profile")
@@ -91,6 +94,54 @@ public class TeacherController {
             Teacher teacher = (Teacher) authentication.getPrincipal();
             courseService.deleteCourseRepository(courseId, teacher.getTeacherId());
             return ResponseEntity.ok("Xóa thành công!");
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    //==============================
+    //Ds svien trong khóa
+    @GetMapping("/courses/{courseId}/students")
+    @PreAuthorize("hasRole('TEACHER')")
+    public ResponseEntity<?> getStudentsInCourse(@PathVariable String courseId,
+                                                 Authentication authentication) {
+        try {
+            Teacher teacher = (Teacher) authentication.getPrincipal();
+            List<StudentInCourseResponse> students = attendanceService.getStudentsInCourse(courseId, teacher.getTeacherId());
+            return ResponseEntity.ok(students);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    //Thêm svien vào khóa
+    @PostMapping("/courses/{courseId}/students/{student_id}")
+    @PreAuthorize("hasRole('TEACHER')")
+    public ResponseEntity<?> addStudentToCourse(@PathVariable String student_id,
+                                                @PathVariable String courseId,
+                                                Authentication authentication) {
+        try {
+            Teacher teacher = (Teacher) authentication.getPrincipal();
+            attendanceService.addStudentInCourse(student_id, courseId, teacher.getTeacherId());
+            return ResponseEntity.ok("Thêm thành công!");
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    //Xóa svien
+    @DeleteMapping("/courses/{courseId}/students/{student_id}")
+    @PreAuthorize("hasRole('TEACHER')")
+    public  ResponseEntity<?> removeStudentFromCourse(@PathVariable String courseId,
+                                                      @PathVariable String student_id,
+                                                      Authentication authentication) {
+        try {
+            Teacher teacher = (Teacher) authentication.getPrincipal();
+            attendanceService.removeStudentInCourse(student_id, courseId, teacher.getTeacherId());
+            return ResponseEntity.ok("Đã xóa thành công!");
         }
         catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

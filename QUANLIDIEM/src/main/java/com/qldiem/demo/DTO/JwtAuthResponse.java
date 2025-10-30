@@ -9,7 +9,7 @@ public class JwtAuthResponse {
     private String accessToken;
     private String tokenType = "Bearer";
     private String username;
-    private String userId;  // ← Đổi từ password sang userId
+    private String userId;
     private Collection<? extends GrantedAuthority> roles;
 
     public JwtAuthResponse(String accessToken, String username, String userId, Collection<? extends GrantedAuthority> roles) {
