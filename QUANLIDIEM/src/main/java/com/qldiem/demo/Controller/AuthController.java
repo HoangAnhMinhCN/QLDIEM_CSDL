@@ -4,10 +4,9 @@ import com.qldiem.demo.DTO.JwtAuthResponse;
 import com.qldiem.demo.DTO.LoginRequest;
 import com.qldiem.demo.DTO.RegisterStudentRequest;
 import com.qldiem.demo.DTO.RegisterTeacherRequest;
-import com.qldiem.demo.Entity.Student;
-import com.qldiem.demo.Entity.Teacher;
 import com.qldiem.demo.Repository.StudentRepository;
 import com.qldiem.demo.Repository.TeacherRepository;
+import com.qldiem.demo.Security.CustomUserDetails;
 import com.qldiem.demo.Security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +15,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,14 +46,8 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtTokenProvider.generateToken(authentication);
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String userId = "";
-        if (userDetails instanceof Student) {
-            userId = ((Student) userDetails).getStudentId();
-        }
-        else if (userDetails instanceof Teacher) {
-            userId = ((Teacher) userDetails).getTeacherId();
-        }
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        String userId = userDetails.getUserId();
 
         return ResponseEntity.ok(new JwtAuthResponse(
                 token,
@@ -67,38 +59,43 @@ public class AuthController {
 
     @PostMapping("/register/student")
     public ResponseEntity<?> registerStudent(@RequestBody RegisterStudentRequest req) {
-        if (studentRepository.existsByUserName(req.getUserName()) || teacherRepository.existsByUserName(req.getUserName())){
+        if (studentRepository.check_username_exist(req.getUserName()) > 0
+                || teacherRepository.check_username_exist(req.getUserName()) > 0){
             return new ResponseEntity<>("Tên đăng nhập đã tồn tại!", HttpStatus.BAD_REQUEST);
         }
 
-        Student student = new Student();
-        student.setStudentId("student" + UUID.randomUUID().toString().replace("-", "").substring(0, 14));
-        student.setUserName(req.getUserName());
-        student.setUserPassword(passwordEncoder.encode(req.getUserPassword()));
-        student.setStudentName(req.getStudentName());
-        student.setBirthday(req.getBirthday());
-        student.setGender(req.getGender());
+        String studentId = "student" + UUID.randomUUID().toString().replace("-", "").substring(0, 14);
 
-        studentRepository.save(student);
+        studentRepository.create_student(
+                studentId,
+                req.getStudentName(),
+                req.getUserName(),
+                passwordEncoder.encode(req.getUserPassword()),
+                req.getBirthday(),
+                req.getGender()
+        );
+
         return new ResponseEntity<>("Đăng ký thành công!", HttpStatus.CREATED);
     }
 
     @PostMapping("/register/teacher")
     public ResponseEntity<?> registerTeacher(@RequestBody RegisterTeacherRequest req) {
-        if (studentRepository.existsByUserName(req.getUserName()) ||
-                teacherRepository.existsByUserName(req.getUserName())){
+        if (studentRepository.check_username_exist(req.getUserName()) > 0
+                || teacherRepository.check_username_exist(req.getUserName()) > 0){
             return new ResponseEntity<>("Tên đăng nhập đã tồn tại!", HttpStatus.BAD_REQUEST);
         }
 
-        Teacher teacher = new Teacher();
-        teacher.setTeacherId("teacher" + UUID.randomUUID().toString().replace("-", "").substring(0, 14));
-        teacher.setUserName(req.getUserName());
-        teacher.setUserPassword(passwordEncoder.encode(req.getUserPassword()));
-        teacher.setTeacherName(req.getTeacherName());
-        teacher.setBirthday(req.getBirthday());
-        teacher.setGender(req.getGender());
+        String teacherId = "teacher" + UUID.randomUUID().toString().replace("-", "").substring(0, 14);
 
-        teacherRepository.save(teacher);
+        teacherRepository.create_teacher(
+                teacherId,
+                req.getTeacherName(),
+                req.getUserName(),
+                passwordEncoder.encode(req.getUserPassword()),
+                req.getBirthday(),
+                req.getGender()
+        );
+
         return new ResponseEntity<>("Đăng ký thành công!", HttpStatus.CREATED);
     }
 }

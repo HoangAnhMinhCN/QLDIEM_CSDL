@@ -1,23 +1,36 @@
 package com.qldiem.demo.Repository;
+import java.util.*;
 
-import com.qldiem.demo.Entity.Course;
+import com.qldiem.demo.DataMapping.CourseResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.qldiem.demo.DataMapping.StudentExamsScore;
+import com.qldiem.demo.DataMapping.StudentList;
 
-@Repository
-public interface CourseRepository extends JpaRepository<Course, String> {
-    List<Course> findByTeacherId(String teacher);
+public interface CourseRepository extends JpaRepository<DummyEntity,String> {
+    //Hien danh sach student trong course
+    @Query(value="CALL show_course_studentList(:course_id_param)",nativeQuery = true)
+    List<StudentList> show_course_StudentLists(@Param("course_id_param") String course_id);
 
-    List<Course> findByCourseNameContainingIgnoreCase(String courseName);
+    //Tra ve tu database diem cac bai thi cua 1 student trong 1 course
+    @Query(value = "CALL show_student_course_exams_score(:student_id_param, :course_id_param)", nativeQuery=true)
+    List<StudentExamsScore> show_student_exams_score(@Param("student_id_param") String student_id, @Param("course_id_param") String course_id);
 
-    @Query(value = "SELECT c.* FROM course c " +
-            "LEFT JOIN attendance a ON c.course_id = a.course_id " +
-            "  AND a.student_id = :studentId " +
-            "WHERE a.id IS NULL",
-            nativeQuery = true)
-    List<Course> findAvailableCoursesForStudent(@Param("studentId") String studentId);
+    //Hiện all course
+    @Query(value = "CALL get_all_course()", nativeQuery = true)
+    List<CourseResponse> getAllCourse();
+
+    //Hiện all course chưa tham gia
+    @Query(value = "CALL find_available_courses_for_student(:student_id_param)", nativeQuery = true)
+    List<CourseResponse> findAvailableCoursesForStudent(@Param("student_id_param") String studentId);
+
+    //tìm course = name
+    @Query(value = "CALL search_course(:keyword_param)", nativeQuery = true)
+    List<CourseResponse> searchCourse(@Param("keyword_param") String keyword);
+
+    //tìm = id
+    @Query(value = "CALL get_course_by_id(:course_id_param)", nativeQuery = true)
+    Optional<CourseResponse> findCourseById(@Param("course_id_param") String courseId);
 }
