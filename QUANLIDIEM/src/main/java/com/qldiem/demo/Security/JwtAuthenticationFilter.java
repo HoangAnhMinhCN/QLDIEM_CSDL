@@ -49,7 +49,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(@NonNull HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
-        return path.startsWith("/api/auth/");
+        String method = request.getMethod();
+
+        // Bỏ qua filter cho:
+        // 1. Tất cả các endpoint /api/auth/**
+        // 2. Tất cả requests OPTIONS (CORS preflight)
+        return path.startsWith("/api/auth") || "OPTIONS".equals(method);
     }
 
     private String getJwtFromRequest(HttpServletRequest request) {
