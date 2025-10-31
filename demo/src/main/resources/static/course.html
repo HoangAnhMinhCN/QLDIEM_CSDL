@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Courses</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --accent:#2563eb;
+    }
+    html,body{
+      height:100%;
+      margin:0;
+      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:var(--bg);
+      color:#0f172a;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    .wrap{
+      max-width:960px;
+      margin:36px auto;
+      padding:20px;
+    }
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:20px;
+    }
+    h1{ margin:0; font-size:1.4rem; }
+    .muted{ color:var(--muted); font-size:0.95rem; }
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap:16px;
+    }
+    .card{
+      background:var(--card);
+      border-radius:12px;
+      padding:14px;
+      box-shadow: 0 6px 18px rgba(12, 20, 42, 0.06);
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      min-height:110px;
+    }
+    .course-name{
+      font-weight:600;
+      font-size:1.05rem;
+    }
+    .meta{ color:var(--muted); font-size:0.9rem; }
+    .id-pill{
+      margin-left:auto;
+      background:rgba(37,99,235,0.08);
+      color:var(--accent);
+      padding:4px 8px;
+      border-radius:999px;
+      font-weight:600;
+      font-size:0.8rem;
+    }
+    .controls{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    button{
+      border:0;
+      background:var(--accent);
+      color:white;
+      padding:8px 12px;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:600;
+    }
+    .notice{ color:var(--muted); margin-top:12px; }
+    .error{ color:#b91c1c; font-weight:600; }
+    .loading{ color:var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Courses</h1>
+        <div class="muted">Data from <code>/course</code> (localhost:8080)</div>
+      </div>
+      <div class="controls">
+        <button id="refreshBtn">Refresh</button>
+      </div>
+    </header>
+
+    <div id="status" class="notice loading">Loading…</div>
+
+    <div id="grid" class="grid" aria-live="polite"></div>
+
+    <div style="margin-top:18px;" class="muted">
+      If you don't see anything: make sure your backend endpoint is accessible at <code>/course</code>.
+      If the endpoint is named differently change the fetch path in the script below.
+    </div>
+  </div>
+
+  <script>
+    // Provided sample fallback data (your JSON)
+    const fallbackData = [
+      {"courseName":"Physics","courseId":"c1","joinDate":"2025-10-18"},
+      {"courseName":"OOP","courseId":"c2","joinDate":"2025-10-18"}
+    ];
+
+    const statusEl = document.getElementById('status');
+    const gridEl = document.getElementById('grid');
+    const refreshBtn = document.getElementById('refreshBtn');
+
+    // change this if your REST path is different (e.g. '/courses' or '/api/courses')
+    const FETCH_PATH = '/course';
+
+    async function loadData() {
+      statusEl.textContent = 'Loading…';
+      statusEl.className = 'notice loading';
+      gridEl.innerHTML = '';
+
+      try {
+        const resp = await fetch(FETCH_PATH, {cache: "no-store"});
+        if (!resp.ok) throw new Error('Network response not ok: ' + resp.status);
+        const data = await resp.json();
+
+        // Data might be wrapped or be the array directly. Normalize:
+        const arr = Array.isArray(data) ? data :
+                    (Array.isArray(data?.data) ? data.data : [data]);
+
+        render(arr);
+        statusEl.textContent = `Loaded ${arr.length} item${arr.length===1 ? '' : 's'}.`;
+      } catch (err) {
+        console.warn('Fetch failed, using fallback data:', err);
+        render(fallbackData);
+        statusEl.textContent = 'Could not fetch from ' + FETCH_PATH + ' — showing fallback sample data.';
+        statusEl.className = 'notice';
+        const e = document.createElement('div');
+        e.className = 'error';
+        e.textContent = 'Fetch error: ' + (err.message || err);
+        statusEl.appendChild(e);
+      }
+    }
+
+    function render(items) {
+      gridEl.innerHTML = '';
+      if (!items || items.length === 0) {
+        gridEl.innerHTML = '<div class="muted">No courses found.</div>';
+        return;
+      }
+      for (const item of items) {
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        const row1 = document.createElement('div');
+        row1.style.display = 'flex';
+        row1.style.alignItems = 'center';
+        row1.style.gap = '8px';
+
+        const title = document.createElement('div');
+        title.className = 'course-name';
+        title.textContent = item.courseName ?? 'Untitled';
+
+        const pill = document.createElement('div');
+        pill.className = 'id-pill';
+        pill.textContent = item.courseId ?? '';
+
+        row1.appendChild(title);
+        row1.appendChild(pill);
+
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.textContent = 'Joined: ' + formatDate(item.joinDate);
+
+        card.appendChild(row1);
+        card.appendChild(meta);
+
+        gridEl.appendChild(card);
+      }
+    }
+
+    function formatDate(d) {
+      if (!d) return '-';
+      // try to parse ISO date
+      const dt = new Date(d);
+      if (!isNaN(dt)) {
+        return dt.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+      }
+      return d;
+    }
+
+    refreshBtn.addEventListener('click', () => loadData());
+
+    // initial load
+    loadData();
+  </script>
+</body>
+</html>
