@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/Database/Dump20251029.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/Database/Dump20251031.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/QUANLIDIEM/src/main/java/com/qldiem/demo/Repository/CourseRepository.java" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/QUANLIDIEM/src/main/java/com/qldiem/demo/Repository/CourseStoredProcRepository.java" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/QUANLIDIEM/src/main/java/com/qldiem/demo/Repository/ExamRepository.java" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/QUANLIDIEM/src/main/java/com/qldiem/demo/Repository/StudentRepository.java" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/QUANLIDIEM/src/main/java/com/qldiem/demo/Repository/TeacherRepository.java" dialect="GenericSQL" />
   </component>
 </project>

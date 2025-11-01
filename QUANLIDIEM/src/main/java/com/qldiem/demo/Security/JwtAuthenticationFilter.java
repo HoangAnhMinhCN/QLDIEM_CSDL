@@ -46,17 +46,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    @Override
-    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) throws ServletException {
-        String path = request.getRequestURI();
-        String method = request.getMethod();
-
-        // Bỏ qua filter cho:
-        // 1. Tất cả các endpoint /api/auth/**
-        // 2. Tất cả requests OPTIONS (CORS preflight)
-        return path.startsWith("/api/auth") || "OPTIONS".equals(method);
-    }
-
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {

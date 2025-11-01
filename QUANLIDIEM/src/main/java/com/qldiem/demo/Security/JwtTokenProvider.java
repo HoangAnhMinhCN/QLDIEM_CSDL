@@ -1,7 +1,5 @@
 package com.qldiem.demo.Security;
 
-import com.qldiem.demo.Entity.Student;
-import com.qldiem.demo.Entity.Teacher;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
@@ -21,7 +19,7 @@ public class JwtTokenProvider {
     private final Key JWT_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
     public String generateToken(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Date now = new Date();
         //1 ngày
         long JWT_EXPIRATION_TIME = 24 * 60 * 60 * 1000L;
@@ -31,13 +29,7 @@ public class JwtTokenProvider {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        String userId = "";
-        if (userDetails instanceof Student){
-            userId = userDetails.getUsername();
-        }
-        else if (userDetails instanceof Teacher){
-            userId = userDetails.getUsername();
-        }
+        String userId = userDetails.getUserId();
 
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())

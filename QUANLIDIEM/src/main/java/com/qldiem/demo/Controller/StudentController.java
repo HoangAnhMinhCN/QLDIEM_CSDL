@@ -1,12 +1,14 @@
 package com.qldiem.demo.Controller;
 
+import com.qldiem.demo.DataMapping.*;
+import com.qldiem.demo.Repository.CourseRepository;
+import com.qldiem.demo.Repository.ExamRepository;
+import com.qldiem.demo.Repository.StudentRepository;
+import com.qldiem.demo.Security.CustomUserDetails;
 
-import com.qldiem.demo.DTO.CourseResponse;
-import com.qldiem.demo.Relations.CourseJoined;
-import com.qldiem.demo.Entity.Student;
-import com.qldiem.demo.Repository.CourseStoredProcRepository;
-import com.qldiem.demo.Service.AttendanceService;
-import com.qldiem.demo.Service.CourseService;
+import java.time.LocalDate;
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,43 +16,53 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/student")
 public class StudentController {
 
     @Autowired
-    private CourseStoredProcRepository courseRepo;
+    private StudentRepository studentRepository;
 
     @Autowired
-    private CourseService  courseService;
-    @Autowired
-    private AttendanceService attendanceService;
+    private CourseRepository courseRepository;
 
-    // Xem các khóa học đã tham gia
-    @GetMapping("/me/courses")
-    @PreAuthorize("hasRole('STUDENT')")
-    public ResponseEntity<List<CourseJoined>> getCourses(Authentication authentication) {
-        Student student = (Student) authentication.getPrincipal();
-        String studentId = student.getStudentId();
-        List<CourseJoined> courses = courseRepo.show_course_joined(studentId);
-        return ResponseEntity.ok(courses);
+    @Autowired
+    private ExamRepository examRepository;
+
+    private String getStudentId(Authentication authentication) {
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        return customUserDetails.getUserId();
     }
 
     // Xem profile
     @GetMapping("/me/profile")
     @PreAuthorize("hasRole('STUDENT')")
-    public ResponseEntity<Student> getStudent(Authentication authentication) {
-        Student student = (Student) authentication.getPrincipal();
-        return ResponseEntity.ok(student);
+    public ResponseEntity<?> getStudentInfo(Authentication authentication) {
+        String studentId = getStudentId(authentication);
+        List<Student> result = studentRepository.show_student_info(studentId);
+        if (result.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(result.getFirst());
     }
+
+    // Xem các khóa học đã tham gia
+    @GetMapping("/me/courses")
+    @PreAuthorize("hasRole('STUDENT')")
+    public ResponseEntity<List<CourseJoined>> getCourses(Authentication authentication) {
+        String studentId = getStudentId(authentication);
+        List<CourseJoined> courses = studentRepository.show_course_joined(studentId);
+        return ResponseEntity.ok(courses);
+    }
+
+
 
     //Xem tất cả khóa học
     @GetMapping("/courses")
     @PreAuthorize("hasRole('STUDENT')")
     public ResponseEntity<List<CourseResponse>> getAllCourses() {
-        List<CourseResponse> courseResponses = courseService.getAllCourse();
+        List<CourseResponse> courseResponses = courseRepository.getAllCourse();
         return ResponseEntity.ok(courseResponses);
     }
 
@@ -58,8 +70,8 @@ public class StudentController {
     @GetMapping("/courses/available")
     @PreAuthorize("hasRole('STUDENT')")
     public ResponseEntity<List<CourseResponse>> getAllAvailableCourses(Authentication authentication) {
-        Student student = (Student) authentication.getPrincipal();
-        List<CourseResponse> courseResponses = courseService.getAvailableCourses(student.getStudentId());
+        String studentId = getStudentId(authentication);
+        List<CourseResponse> courseResponses = courseRepository.findAvailableCoursesForStudent(studentId);
         return ResponseEntity.ok(courseResponses);
     }
 
@@ -67,7 +79,7 @@ public class StudentController {
     @GetMapping("/courses/search")
     @PreAuthorize("hasRole('STUDENT')")
     public ResponseEntity<List<CourseResponse>> searchCourse(@RequestParam String keyword) {
-        List<CourseResponse> courseResponses = courseService.searchCourse(keyword);
+        List<CourseResponse> courseResponses = courseRepository.searchCourse(keyword);
         return ResponseEntity.ok(courseResponses);
     }
 
@@ -75,13 +87,9 @@ public class StudentController {
     @GetMapping("/courses/{courseId}")
     @PreAuthorize("hasRole('STUDENT')")
     public ResponseEntity<CourseResponse> getCourse(@PathVariable String courseId) {
-        try {
-            CourseResponse courseResponse = courseService.getCourseById(courseId);
-            return ResponseEntity.ok(courseResponse);
-        }
-        catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
+        return courseRepository.findCourseById(courseId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     //=============================
@@ -91,8 +99,8 @@ public class StudentController {
     public ResponseEntity<?> joinCourse(@PathVariable String courseId,
                                         Authentication authentication) {
         try {
-            Student student = (Student) authentication.getPrincipal();
-            attendanceService.joinCourse(student.getStudentId(), courseId);
+            String studentId = getStudentId(authentication);
+            studentRepository.join_course(studentId, courseId, LocalDate.now().toString());
             return ResponseEntity.ok("Đăng ký thành công!");
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -105,12 +113,36 @@ public class StudentController {
     public ResponseEntity<?> deleteCourse(@PathVariable String courseId,
                                           Authentication authentication) {
         try {
-            Student student = (Student) authentication.getPrincipal();
-            attendanceService.leaveCourse(student.getStudentId(), courseId);
+            String studentId = getStudentId(authentication);
+            studentRepository.leave_course(studentId, courseId);
             return ResponseEntity.ok("Hủy khóa thành công!");
         }
         catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    // ======Exam=====
+    //xem ds exam đã tham gia
+    @GetMapping("/courses/{courseId}/exams")
+    @PreAuthorize("hasRole('STUDENT')")
+    public ResponseEntity<List<ExamDetail>> getExamsInCourse(@PathVariable String courseId,
+                                                               Authentication authentication) {
+        try {
+            String studentId = getStudentId(authentication);
+            List<ExamDetail> exams = examRepository.show_student_exams_in_course(studentId, courseId);
+            return ResponseEntity.ok(exams);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    //xem thông tin exam
+    @GetMapping("/exams/{examId}")
+    @PreAuthorize("hasRole('STUDENT')")
+    public ResponseEntity<?> getExamById(@PathVariable String examId) {
+        return examRepository.get_exam_by_id(examId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }
