@@ -1,12 +1,12 @@
 package com.qldiem.demo.Controller;
 
-import com.qldiem.demo.DataMapping.CourseResponse;
-import com.qldiem.demo.DataMapping.CourseTeached;
-import com.qldiem.demo.DataMapping.StudentList;
-import com.qldiem.demo.DataMapping.Teacher;
+import com.qldiem.demo.DTO.CreateExamRequest;
+import com.qldiem.demo.DTO.UpdateExamRequest;
+import com.qldiem.demo.DataMapping.*;
 import com.qldiem.demo.DTO.CreateCourseRequest;
 import com.qldiem.demo.DTO.UpdateCourseRequest;
 import com.qldiem.demo.Repository.CourseRepository;
+import com.qldiem.demo.Repository.ExamRepository;
 import com.qldiem.demo.Repository.TeacherRepository;
 import com.qldiem.demo.Security.CustomUserDetails;
 
@@ -27,6 +27,9 @@ public class TeacherController {
     private TeacherRepository teacherRepository;
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private ExamRepository examRepository;
 
     private String getTeacherId(Authentication authentication) {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -161,6 +164,87 @@ public class TeacherController {
             String teacherId = getTeacherId(authentication);
             teacherRepository.remove_student_from_course(student_id, courseId, teacherId);
             return ResponseEntity.ok("Đã xóa thành công!");
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // ============================== EXAM MANAGEMENT ==============================
+    // tạo exam cho course
+    @PostMapping("/courses/{courseId}/exams")
+    @PreAuthorize("hasRole('TEACHER')")
+    public ResponseEntity<?> createExam(@PathVariable String courseId,
+                                        @RequestBody CreateExamRequest req,
+                                        Authentication authentication) {
+        try {
+            String teacherId = getTeacherId(authentication);
+            teacherRepository.create_exam(
+                    req.getExamName(),
+                    teacherId,
+                    courseId,
+                    req.getExamDate(),
+                    java.time.LocalDate.now().toString()
+            );
+            return new ResponseEntity<>("Tạo bài kiểm tra thành công!", HttpStatus.CREATED);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // xem ds exam theo course
+    @GetMapping("/courses/{courseId}/exams")
+    @PreAuthorize("hasRole('TEACHER')")
+    public ResponseEntity<List<ExamResponse>> getExamsByCourse(@PathVariable String courseId){
+        try {
+            List<ExamResponse> exams = examRepository.show_course_exams(courseId);
+            return ResponseEntity.ok(exams);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    //xem thông tin exam
+    @GetMapping("/exams/{examId}")
+    @PreAuthorize("hasRole('TEACHER')")
+    public ResponseEntity<?> getExamById(@PathVariable String examId) {
+        return examRepository.get_exam_by_id(examId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    //sửa thông tin exam
+    @PutMapping("/exams/{examId}")
+    @PreAuthorize("hasRole('TEACHER')")
+    public ResponseEntity<?> updateExam(@PathVariable String examId,
+                                        @RequestBody UpdateExamRequest req,
+                                        Authentication authentication) {
+        try {
+            String teacherId = getTeacherId(authentication);
+            teacherRepository.update_exam(
+                    examId,
+                    req.getExamName(),
+                    req.getExamDate(),
+                    teacherId
+            );
+            return ResponseEntity.ok("Cập nhật bài kiểm tra thành công!");
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // xóa bài kiểm tra
+    @DeleteMapping("/exams/{examId}")
+    @PreAuthorize("hasRole('TEACHER')")
+    public ResponseEntity<?> deleteExam(@PathVariable String examId,
+                                        Authentication authentication) {
+        try {
+            String teacherId = getTeacherId(authentication);
+            teacherRepository.delete_exam(examId, teacherId);
+            return ResponseEntity.ok("Xóa bài kiểm tra thành công!");
         }
         catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

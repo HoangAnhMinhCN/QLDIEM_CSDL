@@ -807,6 +807,75 @@ BEGIN
 END$$
 DELIMITER ;
 
+-- EXAM
+
+-- lấy ds exam theo course
+DROP PROCEDURE IF EXISTS `show_course_exams`;
+DELIMITER $$
+CREATE PROCEDURE `show_course_exams`(IN course_id_param VARCHAR(255))
+BEGIN
+    SELECT
+        exam_id AS examId,
+        exam_name AS examName,
+        teacher_id AS teacherId,
+        course_id AS courseId,
+        exam_date AS examDate,
+        created_date AS createdDate
+    FROM exam
+    WHERE course_id = course_id_param
+    ORDER BY  exam_date DESC;
+END$$
+DELIMITER ;
+
+-- Lấy thông tin exam
+DROP PROCEDURE IF EXISTS `get_exam_by_id`;
+DELIMITER $$
+CREATE PROCEDURE `get_exam_by_id`(IN exam_id_param VARCHAR(255))
+BEGIN
+    SELECT
+        e.exam_id AS examId,
+        e.exam_name AS examName,
+        c.course_name AS courseName,
+        t.teacher_name AS teacherName,
+        e.exam_date AS examDate,
+        e.created_date AS createdDate
+    FROM exam e
+    JOIN course c ON e.course_id = c.course_id
+    JOIN teacher t ON t.teacher_id = e.teacher_id
+    WHERE e.exam_id = exam_id_param;
+END$$
+DELIMITER ;
+
+-- lấy ds exam của student trong course
+DROP PROCEDURE IF EXISTS `show_student_exams_in_course`;
+DELIMITER $$
+CREATE PROCEDURE `show_student_exams_in_course`(
+    IN student_id_param VARCHAR(255),
+    IN course_id_param VARCHAR(255)
+)
+BEGIN
+    IF NOT EXISTS(
+        SELECT 1 FROM attendance
+        WHERE student_id = student_id_param AND course_id = course_id_param
+    ) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Bạn chưa tham gia khóa học này!';
+    ELSE
+        SELECT
+            e.exam_id AS examId,
+            e.exam_name AS examName,
+            c.course_name AS courseName,
+            t.teacher_name AS teacherName,
+            e.exam_date AS examDate,
+            e.created_date AS createdDate
+        FROM exam e
+        JOIN course c ON e.course_id = c.course_id
+        JOIN teacher t ON e.teacher_id = t.teacher_id
+        WHERE e.course_id = course_id_param
+        ORDER BY e.exam_date DESC;
+    END IF;
+END$$
+DELIMITER ;
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

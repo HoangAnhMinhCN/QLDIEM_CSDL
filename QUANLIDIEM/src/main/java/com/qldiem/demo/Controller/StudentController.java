@@ -1,9 +1,8 @@
 package com.qldiem.demo.Controller;
 
-import com.qldiem.demo.DataMapping.CourseJoined;
-import com.qldiem.demo.DataMapping.CourseResponse;
-import com.qldiem.demo.DataMapping.Student;
+import com.qldiem.demo.DataMapping.*;
 import com.qldiem.demo.Repository.CourseRepository;
+import com.qldiem.demo.Repository.ExamRepository;
 import com.qldiem.demo.Repository.StudentRepository;
 import com.qldiem.demo.Security.CustomUserDetails;
 
@@ -26,6 +25,9 @@ public class StudentController {
 
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private ExamRepository examRepository;
 
     private String getStudentId(Authentication authentication) {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -118,5 +120,29 @@ public class StudentController {
         catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    // ======Exam=====
+    //xem ds exam đã tham gia
+    @GetMapping("/courses/{courseId}/exams")
+    @PreAuthorize("hasRole('STUDENT')")
+    public ResponseEntity<List<ExamDetail>> getExamsInCourse(@PathVariable String courseId,
+                                                               Authentication authentication) {
+        try {
+            String studentId = getStudentId(authentication);
+            List<ExamDetail> exams = examRepository.show_student_exams_in_course(studentId, courseId);
+            return ResponseEntity.ok(exams);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    //xem thông tin exam
+    @GetMapping("/exams/{examId}")
+    @PreAuthorize("hasRole('STUDENT')")
+    public ResponseEntity<?> getExamById(@PathVariable String examId) {
+        return examRepository.get_exam_by_id(examId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }

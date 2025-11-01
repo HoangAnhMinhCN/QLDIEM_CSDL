@@ -79,14 +79,22 @@ public interface TeacherRepository extends JpaRepository<DummyEntity,String>{
     //Cap nhat thong tin bai thi
     @Modifying
     @Transactional
-    @Query(value="CALL update_exam(:exam_id_param, :exam_name_param, :exam_date_param )",nativeQuery = true)
-    void update_exam(@Param("exam_id_param") String exam_id, @Param("exam_name_param") String exam_name, @Param("exam_date_param") String exam_date);
+    @Query(value="CALL update_exam(:exam_id_param, :exam_name_param, :exam_date_param, :teacher_id_param)",nativeQuery = true)
+    void update_exam(
+            @Param("exam_id_param") String exam_id,
+            @Param("exam_name_param") String exam_name,
+            @Param("exam_date_param") String exam_date,
+            @Param("teacher_id_param") String teacher_id
+    );
 
     //Xoa mot bai thi
     @Modifying
     @Transactional
-    @Query(value = "CALL delete_exam(:exam_id_param)",nativeQuery = true)
-    void delete_exam( @Param("exam_id_param") String exam_id);
+    @Query(value = "CALL delete_exam(:exam_id_param :teacher_id_param)",nativeQuery = true)
+    void delete_exam(
+            @Param("exam_id_param") String exam_id,
+            @Param("teacher_id_param") String teacher_id
+    );
 
     //thêm student
     @Modifying
