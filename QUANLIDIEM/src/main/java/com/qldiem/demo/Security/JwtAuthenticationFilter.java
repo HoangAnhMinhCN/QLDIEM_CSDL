@@ -46,6 +46,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    @Override
+    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        String method = request.getMethod();
+
+        boolean skip = path.startsWith("/api/auth") || "OPTIONS".equals(method);
+
+        // LOG ĐỂ DEBUG
+        System.out.println("========== JWT FILTER DEBUG ==========");
+        System.out.println("URI: " + path);
+        System.out.println("Method: " + method);
+        System.out.println("Should skip filter: " + skip);
+        System.out.println("======================================");
+
+        return skip;
+    }
+
+
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {

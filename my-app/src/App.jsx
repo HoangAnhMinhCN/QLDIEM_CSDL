@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from "react";
 import {
     BrowserRouter as Router,
     Routes,
@@ -10,61 +10,74 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Teacher from "./pages/Teacher.jsx";
 import Student from "./pages/Student.jsx";
-import './style.css';
+import "./style.css";
+
+// Component bảo vệ route - Kiểm tra token trong localStorage
+function ProtectedRoute({ children, allowedRole }) {
+    const token = localStorage.getItem("token");
+    const userStr = localStorage.getItem("user");
+
+    if (!token) {
+        // Chưa đăng nhập -> về trang login
+        return <Navigate to="/login" replace />;
+    }
+
+    if (allowedRole) {
+        try {
+            const user = JSON.parse(userStr);
+            const roles = user.roles || user.authorities || [];
+
+            let hasRole = false;
+            roles.forEach((role) => {
+                const roleName = typeof role === 'string' ? role : (role.authority || role.role);
+                if (roleName === `ROLE_${allowedRole.toUpperCase()}` || roleName === allowedRole.toUpperCase()) {
+                    hasRole = true;
+                }
+            });
+
+            if (!hasRole) {
+                // Không có quyền -> về trang login
+                return <Navigate to="/login" replace />;
+            }
+        } catch (err) {
+            console.error("Error parsing user:", err);
+            return <Navigate to="/login" replace />;
+        }
+    }
+
+    return children;
+}
 
 export default function App() {
-    // Lưu thông tin user sau khi đăng nhập
-    const [user, setUser] = useState(null);
-
-    // Hàm xử lý khi đăng nhập thành công
-    const handleLoginSuccess = (loggedInUser) => {
-        setUser(loggedInUser);
-    };
-
     return (
         <Router>
             <Routes>
-                {/* ✅ Trang mặc định: khi mở app, tự động chuyển sang trang đăng ký */}
+                {/* Trang chủ -> chuyển về register */}
                 <Route path="/" element={<Navigate to="/register" replace />} />
 
                 {/* Trang đăng ký */}
                 <Route path="/register" element={<Register />} />
 
-                {/* Trang đăng nhập:
-                    - Nếu chưa đăng nhập → hiển thị form login
-                    - Nếu đã đăng nhập → chuyển đến trang tương ứng */}
-                <Route
-                    path="/login"
-                    element={
-                        !user ? (
-                            <Login onLoginSuccess={handleLoginSuccess} />
-                        ) : (
-                            <Navigate to={user.role === 'student' ? '/student' : '/teacher'} />
-                        )
-                    }
-                />
+                {/* Trang đăng nhập */}
+                <Route path="/login" element={<Login />} />
 
-                {/* Trang giáo viên */}
+                {/* Trang giáo viên - Được bảo vệ */}
                 <Route
                     path="/teacher"
                     element={
-                        user && user.role === 'teacher' ? (
+                        <ProtectedRoute allowedRole="teacher">
                             <Teacher />
-                        ) : (
-                            <Navigate to="/login" replace />
-                        )
+                        </ProtectedRoute>
                     }
                 />
 
-                {/* Trang sinh viên */}
+                {/* Trang sinh viên - Được bảo vệ */}
                 <Route
                     path="/student"
                     element={
-                        user && user.role === 'student' ? (
+                        <ProtectedRoute allowedRole="student">
                             <Student />
-                        ) : (
-                            <Navigate to="/login" replace />
-                        )
+                        </ProtectedRoute>
                     }
                 />
             </Routes>
