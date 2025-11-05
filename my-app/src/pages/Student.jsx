@@ -244,7 +244,7 @@ export default function Student() {
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Header */}
-            <header className="bg-white shadow-md sticky top-0 z-10">
+            <header className="bg-white shadow-md sticky top-0 z-10 w-screen">
                 <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
                     <h1 className="text-2xl font-bold text-blue-600 flex items-center gap-2">
                         <BookOpen className="w-7 h-7" />

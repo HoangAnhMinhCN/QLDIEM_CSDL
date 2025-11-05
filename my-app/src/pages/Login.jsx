@@ -13,9 +13,7 @@ export default function Login() {
         setLoading(true);
 
         try {
-            console.log("🔄 Bắt đầu đăng nhập...");
-
-            // Xóa token cũ và CLEAR tất cả localStorage
+            // Xóa token cũ
             localStorage.clear();
 
             // Gọi API đăng nhập
@@ -30,26 +28,18 @@ export default function Login() {
                 }),
             });
 
-            console.log("📡 Response status:", response.status);
-
             if (!response.ok) {
                 throw new Error("Đăng nhập thất bại!");
             }
 
             const data = await response.json();
-            console.log("✅ Login response:", data);
 
             const token = data.accessToken;
             const roles = data.roles || data.authorities || [];
 
-            console.log("🔑 Token:", token ? "Có" : "Không có");
-            console.log("👤 Roles:", roles);
-
-            // Lưu thông tin vào localStorage
+            // Lưu vào localStorage
             localStorage.setItem("token", token);
             localStorage.setItem("user", JSON.stringify(data));
-
-            console.log("💾 Đã lưu vào localStorage");
 
             // Kiểm tra vai trò
             let isTeacher = false;
@@ -57,7 +47,6 @@ export default function Login() {
 
             roles.forEach((role) => {
                 const roleName = typeof role === 'string' ? role : (role.authority || role.role);
-                console.log("🎭 Role found:", roleName);
 
                 if (roleName === "ROLE_TEACHER" || roleName === "TEACHER") {
                     isTeacher = true;
@@ -67,67 +56,43 @@ export default function Login() {
                 }
             });
 
-            console.log("🎓 isTeacher:", isTeacher, "| isStudent:", isStudent);
-
-            // Điều hướng theo vai trò - ƯU TIÊN STUDENT
+            // Điều hướng theo vai trò
             if (isStudent) {
-                console.log("🚀 Chuyển hướng đến /student");
                 alert("Đăng nhập thành công! Chào học sinh 👨‍🎓");
-
-                // Thử nhiều cách chuyển trang
-                setTimeout(() => {
-                    navigate("/student", { replace: true });
-                }, 500);
-
+                setTimeout(() => navigate("/student", { replace: true }), 300);
             } else if (isTeacher) {
-                console.log("🚀 Chuyển hướng đến /teacher");
                 alert("Đăng nhập thành công! Chào giáo viên 👩‍🏫");
-
-                setTimeout(() => {
-                    navigate("/teacher", { replace: true });
-                }, 500);
-
+                setTimeout(() => navigate("/teacher", { replace: true }), 300);
             } else {
-                console.log("⚠️ Không xác định được role, kiểm tra userId");
-                // Fallback: Dựa vào userId hoặc mặc định student
+                // Fallback: dựa vào userId
                 if (data.userId && data.userId.toLowerCase().includes("teacher")) {
-                    console.log("🚀 Fallback: Chuyển hướng đến /teacher");
                     alert("Đăng nhập thành công! Chào giáo viên 👩‍🏫");
-
-                    setTimeout(() => {
-                        navigate("/teacher", { replace: true });
-                    }, 500);
-
+                    setTimeout(() => navigate("/teacher", { replace: true }), 300);
                 } else {
-                    console.log("🚀 Fallback: Chuyển hướng đến /student");
                     alert("Đăng nhập thành công! Chào học sinh 👨‍🎓");
-
-                    setTimeout(() => {
-                        navigate("/student", { replace: true });
-                    }, 500);
+                    setTimeout(() => navigate("/student", { replace: true }), 300);
                 }
             }
         } catch (err) {
-            console.error("❌ Login error:", err);
+            console.error("Login error:", err);
             alert("Đăng nhập thất bại! Vui lòng kiểm tra tên đăng nhập và mật khẩu.");
         } finally {
             setLoading(false);
-            console.log("🏁 Kết thúc quá trình đăng nhập");
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-50 p-4">
+        <div className="login-page min-h-screen w-screen fixed inset-0 grid place-items-center bg-gradient-to-br from-blue-50 via-white to-blue-50 p-4">
             <div className="w-full max-w-md">
                 {/* Logo & Title */}
-                <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
+                <div className="text-center mb-6">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-3">
                         <BookOpen className="w-8 h-8 text-white" />
                     </div>
-                    <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                    <h1 className="text-2xl font-bold text-gray-800 mb-1">
                         Hệ thống quản lý điểm
                     </h1>
-                    <p className="text-gray-600">
+                    <p className="text-sm text-gray-600">
                         Đăng nhập để tiếp tục
                     </p>
                 </div>
@@ -137,7 +102,7 @@ export default function Login() {
                     onSubmit={handleLogin}
                     className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100"
                 >
-                    <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
+                    <h2 className="text-xl font-bold mb-6 text-center text-gray-800">
                         Đăng nhập
                     </h2>
 
@@ -211,8 +176,8 @@ export default function Login() {
                 </form>
 
                 {/* Footer */}
-                <p className="text-center mt-6 text-sm text-gray-500">
-                    © 2025 Hệ thống quản lý điểm. All rights reserved.
+                <p className="text-center mt-4 text-xs text-gray-500">
+                    © 2025 Hệ thống quản lý điểm
                 </p>
             </div>
         </div>
