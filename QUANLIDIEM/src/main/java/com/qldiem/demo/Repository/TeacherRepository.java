@@ -67,10 +67,9 @@ public interface TeacherRepository extends JpaRepository<DummyEntity,String>{
     //Tao mot bai thi
     @Modifying
     @Transactional
-    @Query(value = "CALL create_exam(:exam_name_param, :teacher_id_param, :course_id_param, :exam_date_param, :created_date_param)", nativeQuery = true)
+    @Query(value = "CALL create_exam(:exam_name_param, :course_id_param, :exam_date_param, :created_date_param)", nativeQuery = true)
     void create_exam(
             @Param("exam_name_param") String exam_name,
-            @Param("teacher_id_param") String teacher_id,
             @Param("course_id_param") String course_id,
             @Param("exam_date_param") String exam_date,
             @Param("created_date_param") String created_date
@@ -90,7 +89,7 @@ public interface TeacherRepository extends JpaRepository<DummyEntity,String>{
     //Xoa mot bai thi
     @Modifying
     @Transactional
-    @Query(value = "CALL delete_exam(:exam_id_param :teacher_id_param)",nativeQuery = true)
+    @Query(value = "CALL delete_exam(:exam_id_param, :teacher_id_param)",nativeQuery = true)
     void delete_exam(
             @Param("exam_id_param") String exam_id,
             @Param("teacher_id_param") String teacher_id
@@ -116,11 +115,14 @@ public interface TeacherRepository extends JpaRepository<DummyEntity,String>{
             @Param("teacher_id") String teacher_id
     );
 
-    //Cap nhat diem
-    @Modifying
-    @Transactional
-    @Query(value = "CALL update_score(:exam_id_param, :student_id_param, :score_param )",nativeQuery = true)
-    void update_score(@Param("exam_id_param") String exam_id, @Param("student_id_param") String student_id,@Param("score_param") String score);
+        //Cap nhat diem
+        @Modifying
+        @Transactional
+        @Query(value = "CALL update_score(:exam_id_param, :student_id_param, :score_param, :teacher_id_param)",nativeQuery = true)
+        void update_score(@Param("exam_id_param") String exam_id,
+                                          @Param("student_id_param") String student_id,
+                                          @Param("score_param") String score,
+                                          @Param("teacher_id_param") String teacher_id);
 
     //Ktra username login
     @Query(value = "SELECT COUNT(*) FROM teacher WHERE user_name = :username_param", nativeQuery = true)

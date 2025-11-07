@@ -2,6 +2,7 @@ package com.qldiem.demo.Controller;
 
 import com.qldiem.demo.DTO.CreateExamRequest;
 import com.qldiem.demo.DTO.UpdateExamRequest;
+import com.qldiem.demo.DTO.UpdateScoreRequest;
 import com.qldiem.demo.DataMapping.*;
 import com.qldiem.demo.DTO.CreateCourseRequest;
 import com.qldiem.demo.DTO.UpdateCourseRequest;
@@ -178,14 +179,13 @@ public class TeacherController {
                                         @RequestBody CreateExamRequest req,
                                         Authentication authentication) {
         try {
-            String teacherId = getTeacherId(authentication);
-            teacherRepository.create_exam(
-                    req.getExamName(),
-                    teacherId,
-                    courseId,
-                    req.getExamDate(),
-                    java.time.LocalDate.now().toString()
-            );
+        // teacher_id is derived from the authenticated user; create_exam no longer needs teacher_id param
+        teacherRepository.create_exam(
+            req.getExamName(),
+            courseId,
+            req.getExamDate(),
+            java.time.LocalDate.now().toString()
+        );
             return new ResponseEntity<>("Tạo bài kiểm tra thành công!", HttpStatus.CREATED);
         }
         catch (Exception e) {
@@ -247,6 +247,36 @@ public class TeacherController {
             return ResponseEntity.ok("Xóa bài kiểm tra thành công!");
         }
         catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // xem điểm bài kiểm tra
+    @GetMapping("/exams/{examId}/scores")
+    @PreAuthorize("hasRole('TEACHER')")
+    public ResponseEntity<?> getExamScores(@PathVariable String examId) {
+        try {
+            List<ExamScores> scores = examRepository.show_exam_scores(examId);
+            return ResponseEntity.ok(scores);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // cập nhật điểm bài kiểm tra
+    @PutMapping("/exams/{examId}/scores/{studentId}")
+    @PreAuthorize("hasRole('TEACHER')")
+    public ResponseEntity<?> updateExamScore(
+            @PathVariable String examId,
+            @PathVariable String studentId,
+            @RequestBody UpdateScoreRequest req,
+            Authentication authentication) {
+        try {
+            String teacherId = getTeacherId(authentication);
+            teacherRepository.update_score(examId, studentId, String.valueOf(req.getScore()), teacherId);
+            return ResponseEntity.ok("Cập nhật điểm thành công!");
+        } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

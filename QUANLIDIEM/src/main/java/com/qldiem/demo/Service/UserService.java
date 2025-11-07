@@ -31,7 +31,7 @@ public class UserService implements UserDetailsService {
         if (teacherOpt.isPresent()) {
             Teacher teacher = teacherOpt.get();
             Collection<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_TEACHER"));
-
+            System.out.println("DEBUG: Teacher found: " + username + ", authorities: " + authorities);
             return new CustomUserDetails(
                     teacher.getUserName(),
                     teacher.getUserPassword(),
@@ -39,14 +39,14 @@ public class UserService implements UserDetailsService {
                     authorities
             );
         }
-
+  
 
         Optional<Student> studentOpt = studentRepository.find_student_by_username(username);
 
         if (studentOpt.isPresent()) {
             Student student = studentOpt.get();
             Collection<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_STUDENT"));
-
+            System.out.println("DEBUG: Student found: " + username + ", authorities: " + authorities);
             return new CustomUserDetails(
                     student.getUserName(),
                     student.getUserPassword(),

@@ -61,4 +61,8 @@ public interface StudentRepository extends JpaRepository<DummyEntity,String>{
             @Param("birthday") String birthday,
             @Param("gender") String gender
     );
+
+    
+   
+
 }

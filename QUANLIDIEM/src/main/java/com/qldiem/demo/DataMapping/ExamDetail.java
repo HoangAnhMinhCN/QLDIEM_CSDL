@@ -7,4 +7,5 @@ public interface ExamDetail {
     String getTeacherName();
     String getExamDate();
     String getCreatedDate();
+    String getScore();
 }

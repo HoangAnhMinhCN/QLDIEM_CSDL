@@ -2,6 +2,8 @@ package com.qldiem.demo.Repository;
 
 import com.qldiem.demo.DataMapping.ExamDetail;
 import com.qldiem.demo.DataMapping.ExamResponse;
+import com.qldiem.demo.DataMapping.ExamScores;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,4 +27,12 @@ public interface ExamRepository extends JpaRepository<DummyEntity, String> {
             @Param("student_id_param") String studentId,
             @Param("course_id_param") String courseId
     );
+
+    // lấy ds điểm của exam
+    @Query(value = "CALL show_exam_scores(:exam_id_param)", nativeQuery = true)
+    List<ExamScores> show_exam_scores(@Param("exam_id_param") String examId);
+    
+
+    
+
 }
