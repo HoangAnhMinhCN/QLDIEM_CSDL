@@ -64,7 +64,8 @@ public class AuthController {
             return new ResponseEntity<>("Tên đăng nhập đã tồn tại!", HttpStatus.BAD_REQUEST);
         }
 
-        String studentId = "student" + UUID.randomUUID().toString().replace("-", "").substring(0, 14);
+        String studentId = "student" + UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+        
 
         studentRepository.create_student(
                 studentId,

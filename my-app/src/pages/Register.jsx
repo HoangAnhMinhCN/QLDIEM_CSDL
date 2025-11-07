@@ -39,10 +39,10 @@ export default function Register() {
     };
 
     return (
-        <div className="flex items-center justify-center h-screen bg-gray-100">
+        <div className="min-h-screen w-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
             <form
                 onSubmit={handleRegister}
-                className="bg-white p-8 rounded-2xl shadow w-96"
+                className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md mx-auto"
             >
                 <h2 className="text-2xl font-bold mb-6 text-center">Đăng ký</h2>
 

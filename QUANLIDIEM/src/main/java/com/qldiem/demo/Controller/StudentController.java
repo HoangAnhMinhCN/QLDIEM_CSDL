@@ -56,8 +56,6 @@ public class StudentController {
         return ResponseEntity.ok(courses);
     }
 
-
-
     //Xem tất cả khóa học
     @GetMapping("/courses")
     @PreAuthorize("hasRole('STUDENT')")
@@ -145,4 +143,5 @@ public class StudentController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
 }

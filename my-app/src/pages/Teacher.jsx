@@ -18,11 +18,14 @@ export default function Teacher() {
     const [showExamsModal, setShowExamsModal] = useState(false);
     const [showCreateExamModal, setShowCreateExamModal] = useState(false);
     const [showEditExamModal, setShowEditExamModal] = useState(false);
+    const [showScoresModal, setShowScoresModal] = useState(false);
 
     // Form data
     const [courseForm, setCourseForm] = useState({ courseName: "", startDate: "" });
     const [examForm, setExamForm] = useState({ examName: "", examDate: "" });
     const [editingExam, setEditingExam] = useState(null);
+    const [selectedExamScores, setSelectedExamScores] = useState([]);
+    const [editedScores, setEditedScores] = useState({});
 
     const navigate = useNavigate();
     const token = localStorage.getItem("token");
@@ -194,6 +197,86 @@ export default function Teacher() {
         } catch (err) {
             console.error("❌ Lỗi xóa bài thi:", err);
             alert(err.response?.data || "Lỗi khi xóa bài thi!");
+        }
+    };
+
+    const handleViewScores = async (examId, examName) => {
+        try {
+            console.log("📊 Xem điểm bài thi:", examId);
+            const res = await api.get(`/api/teacher/exams/${examId}/scores`); // CALL show_exam_scores
+            console.log("✅ Scores:", res.data);
+            setSelectedExamScores(res.data);
+            setEditingExam({ examId, examName }); // Store exam info for modal title
+            setShowScoresModal(true);
+            
+            // Initialize editedScores with current scores
+            const initialScores = {};
+            res.data.forEach(score => {
+                initialScores[score.studentId] = score.score;
+            });
+            setEditedScores(initialScores);
+        } catch (err) {
+            console.error("❌ Lỗi tải điểm thi:", err);
+            alert("Lỗi khi tải điểm thi!");
+        }
+    };
+
+    const handleScoreChange = (studentId, newScore) => {
+        // Don't allow invalid values
+        if (newScore === '' || (parseFloat(newScore) >= 0 && parseFloat(newScore) <= 10)) {
+            setEditedScores(prev => ({
+                ...prev,
+                [studentId]: newScore
+            }));
+        }
+    };
+
+    const handleSaveScores = async () => {
+        try {
+            // Validate all scores
+            const invalidScores = Object.entries(editedScores).filter(([_, score]) => {
+                const numScore = parseFloat(score);
+                return isNaN(numScore) || numScore < 0 || numScore > 10;
+            });
+
+            if (invalidScores.length > 0) {
+                alert("Điểm không hợp lệ! Điểm phải từ 0 đến 10.");
+                return;
+            }
+
+            // Filter out scores that haven't changed
+            const changedScores = Object.entries(editedScores).filter(([studentId, newScore]) => {
+                const originalScore = selectedExamScores.find(s => s.studentId === studentId)?.score;
+                return newScore !== originalScore;
+            });
+
+            if (changedScores.length === 0) {
+                alert("Không có thay đổi nào để lưu!");
+                return;
+            }
+
+            console.log("💾 Lưu điểm thi:", changedScores);
+
+            // Update scores sequentially
+            for (const [studentId, score] of changedScores) {
+                await api.put(`/api/teacher/exams/${editingExam.examId}/scores/${studentId}`, { score: parseFloat(score) }); // CALL update_score
+            }
+
+            alert("Cập nhật điểm thành công!");
+            
+            // Reload scores
+            const res = await api.get(`/api/teacher/exams/${editingExam.examId}/scores`);
+            setSelectedExamScores(res.data);
+
+            // Reset edited scores
+            const initialScores = {};
+            res.data.forEach(score => {
+                initialScores[score.studentId] = score.score;
+            });
+            setEditedScores(initialScores);
+        } catch (err) {
+            console.error("❌ Lỗi cập nhật điểm:", err);
+            alert(err.response?.data || "Lỗi khi cập nhật điểm!");
         }
     };
 
@@ -444,7 +527,11 @@ export default function Teacher() {
                             {exams.length > 0 ? (
                                 <div className="space-y-3">
                                     {exams.map((exam) => (
-                                        <div key={exam.examId} className="border rounded-lg p-4">
+                                        <div 
+                                            key={exam.examId} 
+                                            className="border rounded-lg p-4 cursor-pointer hover:bg-gray-50 transition"
+                                            onClick={() => handleViewScores(exam.examId, exam.examName)}
+                                        >
                                             <div className="flex justify-between items-start mb-2">
                                                 <div>
                                                     <h4 className="font-bold text-blue-600">{exam.examName}</h4>
@@ -452,7 +539,8 @@ export default function Teacher() {
                                                 </div>
                                                 <div className="flex gap-1">
                                                     <button
-                                                        onClick={() => {
+                                                        onClick={(e) => {
+                                                            e.stopPropagation(); // Prevent opening scores modal
                                                             setEditingExam(exam);
                                                             setExamForm({ examName: exam.examName, examDate: exam.examDate || "" });
                                                             setShowEditExamModal(true);
@@ -462,7 +550,10 @@ export default function Teacher() {
                                                         <Edit className="w-4 h-4" />
                                                     </button>
                                                     <button
-                                                        onClick={() => handleDeleteExam(exam.examId)}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation(); // Prevent opening scores modal
+                                                            handleDeleteExam(exam.examId);
+                                                        }}
                                                         className="p-1 text-red-500 hover:bg-red-50 rounded"
                                                     >
                                                         <Trash2 className="w-4 h-4" />
@@ -560,6 +651,66 @@ export default function Teacher() {
                                 Cập nhật
                             </button>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Exam Scores Modal */}
+            {showScoresModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+                        <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
+                            <h3 className="text-xl font-bold">📊 Điểm bài thi - {editingExam?.examName}</h3>
+                            <button onClick={() => setShowScoresModal(false)} className="text-gray-500 hover:text-gray-700">
+                                <X className="w-6 h-6" />
+                            </button>
+                        </div>
+                        <div className="p-6">
+                            {selectedExamScores.length > 0 ? (
+                                <>
+                                    <div className="relative overflow-x-auto mb-4">
+                                        <table className="w-full text-left text-gray-600">
+                                            <thead className="text-xs uppercase bg-gray-50">
+                                                <tr>
+                                                    <th className="px-6 py-3">Mã SV</th>
+                                                    <th className="px-6 py-3">Họ tên</th>
+                                                    <th className="px-6 py-3">Điểm</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {selectedExamScores.map((score, index) => (
+                                                    <tr key={score.studentId} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                                                        <td className="px-6 py-4">{score.studentId}</td>
+                                                        <td className="px-6 py-4">{score.studentName}</td>
+                                                        <td className="px-6 py-4">
+                                                            <input
+                                                                type="number"
+                                                                min="0"
+                                                                max="10"
+                                                                step="0.1"
+                                                                value={editedScores[score.studentId] || ''}
+                                                                onChange={(e) => handleScoreChange(score.studentId, e.target.value)}
+                                                                className="w-20 border rounded px-2 py-1 focus:ring-2 focus:ring-blue-500"
+                                                            />
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div className="flex justify-end">
+                                        <button
+                                            onClick={handleSaveScores}
+                                            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition flex items-center gap-2"
+                                        >
+                                            💾 Lưu thay đổi
+                                        </button>
+                                    </div>
+                                </>
+                            ) : (
+                                <p className="text-center text-gray-500 py-8">Chưa có sinh viên nào có điểm</p>
+                            )}
+                        </div>
                     </div>
                 </div>
             )}
