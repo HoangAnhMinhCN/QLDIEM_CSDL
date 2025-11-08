@@ -32,7 +32,7 @@ CREATE TABLE `attendance` (
   KEY `course_id` (`course_id`),
   CONSTRAINT `attendance_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `student` (`student_id`) ON DELETE CASCADE,
   CONSTRAINT `attendance_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +41,7 @@ CREATE TABLE `attendance` (
 
 LOCK TABLES `attendance` WRITE;
 /*!40000 ALTER TABLE `attendance` DISABLE KEYS */;
-INSERT INTO `attendance` VALUES (4,'studentf38677fa6b','course199cac2670','2025-08-13'),(5,'studentd55341ebad','course199cac2670','2025-08-13'),(7,'student5fb302a05a','course6e2370cfbb','2025-11-07'),(8,'student014e7770a6','course6e2370cfbb','2025-11-07'),(9,'student71699fb61c','course6e2370cfbb','2025-11-07');
+INSERT INTO `attendance` VALUES (7,'student5fb302a05a','course6e2370cfbb','2025-11-07'),(8,'student014e7770a6','course6e2370cfbb','2025-11-07'),(9,'student71699fb61c','course6e2370cfbb','2025-11-07'),(10,'student5fb302a05a','course19a5f1c5bb','2025-11-07'),(11,'student71699fb61c','course9917bf9bbb','2025-11-07');
 /*!40000 ALTER TABLE `attendance` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -69,7 +69,7 @@ CREATE TABLE `course` (
 
 LOCK TABLES `course` WRITE;
 /*!40000 ALTER TABLE `course` DISABLE KEYS */;
-INSERT INTO `course` VALUES ('c3','Calculus','t3','2025-08-16'),('course124de93bb6','Hệ Điều Hành - Nhóm 1','teacher9d42ad7fd5',NULL),('course199cac2670','Mạng máy tính','teacherd96127310e','2025-08-20'),('course19a5f1c5bb','OOP','teacher3f629f9c1c2846','2025-08-15'),('course257adf1050','Cơ sở dữ liệu','teacher9d42ad7fd5','2025-08-10'),('course28c9f8459b','Hệ Điều Hành','teacher9d42ad7fd5',NULL),('course6e2370cfbb','Python','teacher3f629f9c1c2846','2025-08-15'),('course7099d558ca','Cơ sở dữ liệu - Nhóm 2','teacher9d42ad7fd5','2025-08-11');
+INSERT INTO `course` VALUES ('course04b00b5ebc','An toàn thông tin','teacher3f629f9c1c2846','2025-08-15'),('course19a5f1c5bb','OOP','teacher3f629f9c1c2846','2025-08-15'),('course55be0e85bb','Xác suất thống kê','teacher25f1967890e24d','2025-08-15'),('course6af7adcfbb','Đại số','teacher25f1967890e24d','2025-08-16'),('course6e2370cfbb','Python','teacher3f629f9c1c2846','2025-08-15'),('course9917bf9bbb','Mạng Máy Tính','teacher17631c85336f4e','2025-08-20');
 /*!40000 ALTER TABLE `course` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -120,7 +120,7 @@ CREATE TABLE `exam` (
 
 LOCK TABLES `exam` WRITE;
 /*!40000 ALTER TABLE `exam` DISABLE KEYS */;
-INSERT INTO `exam` VALUES ('exam0d9c4e85bb','Kiểm tra thường xuyên','course6e2370cfbb','2025-11-16','2025-11-07'),('exam0f23c50d3d','Kiểm tra 15 phút','course199cac2670','2025-12-06',NULL),('exam22595b3cbb','Kiểm tra thường xuyên 2','course6e2370cfbb','2025-11-15','2025-11-07'),('exambe047ae1bb','Kiểm tra thường xuyên','course6e2370cfbb','2025-11-14','2025-11-07'),('examd5a6e7b0a6','Kiểm tra 15 phút lần 2','course199cac2670','2025-12-06','2025-09-20');
+INSERT INTO `exam` VALUES ('exam0d9c4e85bb','Kiểm tra thường xuyên','course6e2370cfbb','2025-11-16','2025-11-07'),('exam22595b3cbb','Kiểm tra thường xuyên 2','course6e2370cfbb','2025-11-15','2025-11-07'),('exambe047ae1bb','Kiểm tra thường xuyên','course6e2370cfbb','2025-11-14','2025-11-07');
 /*!40000 ALTER TABLE `exam` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -172,7 +172,7 @@ CREATE TABLE `score` (
 
 LOCK TABLES `score` WRITE;
 /*!40000 ALTER TABLE `score` DISABLE KEYS */;
-INSERT INTO `score` VALUES (1,'exam0f23c50d3d','studentf38677fa6b',0),(2,'exam0f23c50d3d','studentd55341ebad',10),(4,'examd5a6e7b0a6','studentf38677fa6b',0),(5,'examd5a6e7b0a6','studentd55341ebad',0),(6,'exambe047ae1bb','student71699fb61c',9),(7,'exambe047ae1bb','student5fb302a05a',9),(9,'exam22595b3cbb','student71699fb61c',0),(10,'exam22595b3cbb','student5fb302a05a',0),(12,'exam0d9c4e85bb','student5fb302a05a',0),(13,'exam0d9c4e85bb','student014e7770a6',0),(14,'exam0d9c4e85bb','student71699fb61c',0);
+INSERT INTO `score` VALUES (6,'exambe047ae1bb','student71699fb61c',9),(7,'exambe047ae1bb','student5fb302a05a',9),(9,'exam22595b3cbb','student71699fb61c',8),(10,'exam22595b3cbb','student5fb302a05a',8),(12,'exam0d9c4e85bb','student5fb302a05a',9),(13,'exam0d9c4e85bb','student014e7770a6',10),(14,'exam0d9c4e85bb','student71699fb61c',9);
 /*!40000 ALTER TABLE `score` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -200,7 +200,7 @@ CREATE TABLE `student` (
 
 LOCK TABLES `student` WRITE;
 /*!40000 ALTER TABLE `student` DISABLE KEYS */;
-INSERT INTO `student` VALUES ('exam7ddc49e8bf','Hoàng Văn Bắc','bacvanhoang','eeeeee','2005-12-12','nam'),('s2','hoang van b','random','123456','2000-01-04','nam'),('student014e7770a6','Nguyễn Văn Đông','NVD','$2a$10$rAprs.q7qFRDa5fNoI/V6.45SRKtAmSyWS8imFFaqxMKqX74PUWqK','2005-01-01','Nam'),('student5fb302a05a','Nguyễn Xuân Quang ','nxq','$2a$10$LdX26eVXWwQmbJvrJ7sTVeWds0O4NSl03SHU1dfahvXMcAwOMBIjy','2005-01-01','Nam'),('student71699fb61c','Phạm Ngọc Anh','PNA','$2a$10$W2g6bYppbCFMzYeOgSIUwOfDVorPaHd0u9YDtLjeLBoeZF1ImFKRq','2005-01-01','Nữ'),('studentd55341ebad','Nguyễn Thị Ngọc Diệp','diepa','asdfgh','2005-03-12','nu'),('studentf14ac13566','Trần Thu Hương','huong','huong1990','2004-10-08','nu'),('studentf38677fa6b','Nguyễn Thị Hằng','hhhhhaaa','zzzzz','2004-03-01','nu');
+INSERT INTO `student` VALUES ('student014e7770a6','Nguyễn Văn Đông','NVD','$2a$10$rAprs.q7qFRDa5fNoI/V6.45SRKtAmSyWS8imFFaqxMKqX74PUWqK','2005-01-01','Nam'),('student5fb302a05a','Nguyễn Xuân Quang ','nxq','$2a$10$LdX26eVXWwQmbJvrJ7sTVeWds0O4NSl03SHU1dfahvXMcAwOMBIjy','2005-01-01','Nam'),('student71699fb61c','Phạm Ngọc Anh','PNA','$2a$10$W2g6bYppbCFMzYeOgSIUwOfDVorPaHd0u9YDtLjeLBoeZF1ImFKRq','2005-01-01','Nữ');
 /*!40000 ALTER TABLE `student` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -228,7 +228,7 @@ CREATE TABLE `teacher` (
 
 LOCK TABLES `teacher` WRITE;
 /*!40000 ALTER TABLE `teacher` DISABLE KEYS */;
-INSERT INTO `teacher` VALUES ('t2','Nguyen Van Quy','quynv','123','1980-06-07','nu'),('t3','Hoàng Văn Ngọc','Ngọc','123456789','1990-03-03','nam'),('teacher3f629f9c1c2846','Phan Văn Cường','phanvancuong','$2a$10$iXtn8QxwaGnObAsMZFxybuC7DEr/dnJY.irhZJdp2fqlzlEfyV6mq','2000-01-01','Nam'),('teacher9d42ad7fd5','Trần Thu Hương','huong','huong1990','1990-09-08','nu'),('teacherd96127310e','Trần Thu Hoài','HoaiThu','hoaithu99999','1989-08-08','nu');
+INSERT INTO `teacher` VALUES ('teacher17631c85336f4e','Phạm Đức Minh','ducminh','$2a$10$Bw4r7wVonMwvvuWHaQ0xru.BTBEeqwmPa2ugYEz.jkS9DcdYid/Xy','2000-02-01','Nam'),('teacher25f1967890e24d','Trần Thu Trang','thutrang','$2a$10$RdBAVOy1X4M758MSb1W1O.w7fEGpbnQMYXCZ.7Up/pNi.You.nipa','2000-01-01','Nữ'),('teacher3f629f9c1c2846','Phan Văn Cường','phanvancuong','$2a$10$iXtn8QxwaGnObAsMZFxybuC7DEr/dnJY.irhZJdp2fqlzlEfyV6mq','2000-01-01','Nam');
 /*!40000 ALTER TABLE `teacher` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -485,15 +485,53 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `delete_student` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_student`(IN student_id_param varchar(255))
+BEGIN
+    delete from student where student_id=student_id_param;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `delete_teacher` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_teacher`(IN teacher_id_param varchar(255))
+BEGIN
+    delete from teacher where teacher_id=teacher_id_param;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `find_available_courses_for_student` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb3 */ ;
-/*!50003 SET character_set_results = utf8mb3 */ ;
-/*!50003 SET collation_connection  = utf8mb3_general_ci */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `find_available_courses_for_student`(IN student_id_param VARCHAR(255))
 BEGIN
@@ -501,7 +539,8 @@ BEGIN
     FROM course c
              JOIN teacher t  ON c.teacher_id = t.teacher_id
              LEFT JOIN attendance a ON c.course_id = a.course_id AND a.student_id = student_id_param
-    WHERE a.id IS NULL;
+    WHERE a.id IS NULL
+    order by c.course_name asc;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -550,17 +589,17 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb3 */ ;
-/*!50003 SET character_set_results = utf8mb3 */ ;
-/*!50003 SET collation_connection  = utf8mb3_general_ci */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_course`()
 BEGIN
-    SELECT c.*, t.teacher_name
-    FROM course c
-             JOIN teacher t ON c.teacher_id = t.teacher_id;
+    select c.*, t.teacher_name from course c
+	join teacher t on c.teacher_id = t.teacher_id
+    order by c.course_name ASC;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -571,18 +610,17 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb3 */ ;
-/*!50003 SET character_set_results = utf8mb3 */ ;
-/*!50003 SET collation_connection  = utf8mb3_general_ci */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_course_by_id`(IN course_id_param VARCHAR(255))
 BEGIN
-    SELECT c.*, t.teacher_name
-    FROM course c
-             JOIN teacher t ON c.teacher_id = t.teacher_id
-    WHERE c.course_id = course_id_param;
+    select  c.*, t.teacher_name from course c
+	join teacher t on c.teacher_id = t.teacher_id
+    where c.course_id = course_id_param;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -769,26 +807,26 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb3 */ ;
-/*!50003 SET character_set_results = utf8mb3 */ ;
-/*!50003 SET collation_connection  = utf8mb3_general_ci */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `show_course_exams`(IN course_id_param VARCHAR(255))
 BEGIN
-    SELECT
-        e.exam_id AS examId,
-        e.exam_name AS examName,
-        c.teacher_id AS teacherId,
-        e.course_id AS courseId,
-        e.exam_date AS examDate,
-        e.created_date AS createdDate
-    FROM exam e
-    JOIN course c ON e.course_id = c.course_id
-    JOIN teacher t ON c.teacher_id = t.teacher_id
-    WHERE e.course_id = course_id_param
-    ORDER BY e.exam_date DESC;
+    select 
+		e.exam_id as examId, 
+        e.exam_name as examName,
+        c.teacher_id as teacherId,
+        e.course_id as courseId,
+        e.exam_date as examDate,
+        e.created_date as createdDate
+    from exam e
+    join course c on e.course_id = c.course_id
+    join teacher t on c.teacher_id = t.teacher_id
+    where e.course_id = course_id_param
+    order by e.exam_date desc;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -799,24 +837,25 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb3 */ ;
-/*!50003 SET character_set_results = utf8mb3 */ ;
-/*!50003 SET collation_connection  = utf8mb3_general_ci */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `show_course_joined`(IN student_id_param VARCHAR(255))
 BEGIN
-    SELECT
+    select
         c.course_id,
         c.course_name,
         c.start_date,
         t.teacher_name,
         a.join_date
-    FROM attendance a
-             JOIN course c ON a.course_id = c.course_id
-             JOIN teacher t ON c.teacher_id = t.teacher_id
-    WHERE a.student_id = student_id_param;
+    from attendance a
+	join course c on a.course_id = c.course_id
+	join teacher t on c.teacher_id = t.teacher_id
+    where a.student_id = student_id_param
+    order by c.course_name asc;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -827,11 +866,11 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb3 */ ;
-/*!50003 SET character_set_results = utf8mb3 */ ;
-/*!50003 SET collation_connection  = utf8mb3_general_ci */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `show_course_studentList`(IN course_id_param VARCHAR(255))
 BEGIN
@@ -840,7 +879,8 @@ BEGIN
         s.student_name AS StudentName
     FROM attendance a
     JOIN student s ON a.student_id = s.student_id
-    WHERE a.course_id = course_id_param;
+    WHERE a.course_id = course_id_param
+    order by s.student_name asc;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -851,11 +891,11 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb3 */ ;
-/*!50003 SET character_set_results = utf8mb3 */ ;
-/*!50003 SET collation_connection  = utf8mb3_general_ci */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `show_course_teached`(IN teacher_id_param VARCHAR(255))
 BEGIN
@@ -864,7 +904,8 @@ BEGIN
         course_name AS courseName,
         start_date AS startDate
     FROM course
-    WHERE teacher_id = teacher_id_param;
+    WHERE teacher_id = teacher_id_param
+    order by course_name asc;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -875,49 +916,18 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb3 */ ;
-/*!50003 SET character_set_results = utf8mb3 */ ;
-/*!50003 SET collation_connection  = utf8mb3_general_ci */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `show_exam_scores`(IN exam_id_param varchar(255))
 BEGIN
     select s.student_id, st.student_name, s.score from score as s
 	inner join student as st on s.student_id=st.student_id
-	where s.exam_id=exam_id_param;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `show_student_course_exams_score` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb3 */ ;
-/*!50003 SET character_set_results = utf8mb3 */ ;
-/*!50003 SET collation_connection  = utf8mb3_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `show_student_course_exams_score`(
-    IN student_id_param VARCHAR(255),
-    IN course_id_param VARCHAR(255)
-)
-BEGIN
-    SELECT
-        e.exam_name AS ExamName,
-        e.exam_date AS ExamDate,
-        c.course_name AS CourseName,
-        t.teacher_name AS TeacherName,
-        s.score AS Score
-    FROM score s
-    JOIN exam e ON s.exam_id = e.exam_id
-    JOIN course c ON e.course_id = c.course_id
-    JOIN teacher t ON c.teacher_id = t.teacher_id
-    WHERE s.student_id = student_id_param AND c.course_id = course_id_param;
+	where s.exam_id=exam_id_param
+    order by st.student_name asc;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1212,4 +1222,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-07 10:34:11
+-- Dump completed on 2025-11-08 19:34:02
